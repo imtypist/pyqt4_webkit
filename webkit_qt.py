@@ -67,6 +67,25 @@ class Manager(QNetworkAccessManager):
         self.table.update([url, str(status), content_type])
 
 
+class JavaScriptEvaluator(QLineEdit):
+
+    def __init__(self, page):
+
+        super(JavaScriptEvaluator, self).__init__()
+
+        self.page = page
+
+        self.returnPressed.connect(self._return_pressed)
+
+ 
+
+    def _return_pressed(self):
+
+        frame = self.page.currentFrame()
+
+        result = frame.evaluateJavaScript(self.text())
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
@@ -84,11 +103,13 @@ if __name__ == "__main__":
     page = QWebPage()
     page.setNetworkAccessManager(manager)
     browser.setPage(page)
-    # url_input at row 1 column 0 of our grid
+    # url_input at row 1 column 0 of our gr
+    js_eval = JavaScriptEvaluator(page)
     grid.addWidget(url_input, 1, 0)
     # browser frame at row 2 column 0 of our grid
     grid.addWidget(browser, 2, 0)
     grid.addWidget(requests_table, 3, 0)
+    grid.addWidget(js_eval, 4, 0)
 
     # main app window
     main_frame = QWidget()
